@@ -9,7 +9,18 @@ const tagRoutes = require("./routes/tagRoutes"); // Tags API for managing lead t
 const app = express();
 
 // Middleware setup iska kaam hai incoming requests ko handle karna matlab ek example ke taur pe json data ko parse karna
-app.use(cors());
+// CORS configuration for production
+const corsOptions = {
+  origin: [
+    "http://localhost:5173", // Local development
+    "http://localhost:3000",
+    "https://client-mate.vercel.app", // Production frontend
+  ],
+  credentials: true,
+  optionsSuccessStatus: 200,
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
