@@ -1173,10 +1173,8 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 
 For issues, questions, or suggestions:
 
-- 📧 Email: your.email@example.com
-- 🐛 Issues: [GitHub Issues](https://github.com/Shams261/clientmate-crm/issues)
-- 📖 Docs: [GitHub Wiki](https://github.com/Shams261/clientmate-crm/wiki)
-
+- 📧 Email: shamsshoaib261@gmail.com
+  
 ---
 
 <div align="center">
