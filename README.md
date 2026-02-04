@@ -1154,8 +1154,8 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 
 **Shams Tabrez**
 
-- GitHub: [@shamstabrez](https://github.com/shamstabrez)
-- Email: your.email@example.com
+- GitHub: [@shamstabrez](https://github.com/Shams261)
+- Email: shamsshoaib261@gmail.com
 
 ### Acknowledgments
 
@@ -1173,17 +1173,15 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 
 For issues, questions, or suggestions:
 
-- 📧 Email: your.email@example.com
-- 🐛 Issues: [GitHub Issues](https://github.com/shamstabrez/clientmate-crm/issues)
-- 📖 Docs: [GitHub Wiki](https://github.com/shamstabrez/clientmate-crm/wiki)
-
+- 📧 Email: shamsshoaib261@gmail.com
+  
 ---
 
 <div align="center">
 
 **⭐ Star this repo if you find it helpful!**
 
-Made with ❤️ by [Shams Tabrez](https://github.com/shamstabrez)
+Made with ❤️ by [Shams Tabrez](https://github.com/Shams261)
 
 [⬆ Back to Top](#-clientmate-crm)
 
