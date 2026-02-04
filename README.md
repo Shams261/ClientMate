@@ -1154,8 +1154,8 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 
 **Shams Tabrez**
 
-- GitHub: [@shamstabrez](https://github.com/shamstabrez)
-- Email: your.email@example.com
+- GitHub: [@shamstabrez](https://github.com/Shams261)
+- Email: shamsshoaib261@gmail.com
 
 ### Acknowledgments
 
