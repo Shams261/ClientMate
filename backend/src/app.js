@@ -4,6 +4,7 @@ const leadRoutes = require("./routes/leadRoutes");
 const salesAgentRoutes = require("./routes/salesAgentRoutes");
 const commentRoutes = require("./routes/commentRoutes");
 const reportRoutes = require("./routes/reportRoutes");
+const tagRoutes = require("./routes/tagRoutes"); // Tags API for managing lead tags
 
 const app = express();
 
@@ -16,7 +17,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/leads", leadRoutes); // CRUD routes for leads
 app.use("/leads", commentRoutes); // Routes for adding and getting comments for a lead
 app.use("/agents", salesAgentRoutes); // CRUD routes for sales agents
-
+app.use("/tags", tagRoutes); // Routes for managing tags (GET all, POST new)
 app.use("/report", reportRoutes);
 
 // Health check route - API chal raha hai ya nahi ye check karne ke liye
