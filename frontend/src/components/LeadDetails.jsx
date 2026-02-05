@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"; // React imports
+import { useState, useEffect } from "react";
 import {
   Modal,
   Button,
@@ -8,8 +8,7 @@ import {
   Form,
   Card,
   ListGroup,
-} from "react-bootstrap"; // Bootstrap components
-// API service imports isliye kyunki hume backend se data fetch aur update karna hai
+} from "react-bootstrap";
 import {
   getComments,
   addComment,
@@ -18,13 +17,20 @@ import {
 } from "../services/api";
 import MultiSelectTags from "./MultiSelectTags";
 
+/**
+ * LeadDetails Component
+ *
+ * Shows lead details in a modal with view/edit modes and a comments section.
+ * Comments can be added by selecting an agent as the author from a dropdown.
+ */
 function LeadDetails({ lead, onClose, onUpdate }) {
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
+  const [commentAuthor, setCommentAuthor] = useState(""); // State for selected comment author
   const [agents, setAgents] = useState([]);
   const [editMode, setEditMode] = useState(false);
 
-  // ye state lead ke editable fields ko hold karega jisse hum edit kar sakte hain
+  // Edit data state for lead editing
   const [editData, setEditData] = useState({
     name: lead.name,
     source: lead.source,
@@ -39,6 +45,14 @@ function LeadDetails({ lead, onClose, onUpdate }) {
     fetchComments();
     fetchAgents();
   }, [lead._id]);
+
+  // Set default comment author when agents are loaded
+  useEffect(() => {
+    if (agents.length > 0 && !commentAuthor) {
+      // Default to the lead's assigned agent if available, otherwise first agent
+      setCommentAuthor(lead.salesAgent?._id || agents[0]._id);
+    }
+  }, [agents, lead.salesAgent]);
 
   const fetchComments = async () => {
     try {
@@ -61,10 +75,14 @@ function LeadDetails({ lead, onClose, onUpdate }) {
   const handleAddComment = async (e) => {
     e.preventDefault();
     if (!newComment.trim()) return;
+    if (!commentAuthor) {
+      alert("Please select an agent as the comment author");
+      return;
+    }
 
     try {
       await addComment(lead._id, {
-        author: lead.salesAgent?._id,
+        author: commentAuthor, // Use selected author from dropdown
         commentText: newComment,
       });
       setNewComment("");
@@ -79,10 +97,9 @@ function LeadDetails({ lead, onClose, onUpdate }) {
   const handleUpdate = async (e) => {
     e.preventDefault();
     try {
-      // tag array ko directly bhej rahe hain kyunki Lead model me ye array hi hai
       const dataToSend = {
         ...editData,
-        tags: editData.tags, // Already an array
+        tags: editData.tags,
       };
       await updateLead(lead._id, dataToSend);
       alert("Lead updated successfully!");
@@ -94,12 +111,11 @@ function LeadDetails({ lead, onClose, onUpdate }) {
     }
   };
 
-  // handler for tag changes from MultiSelectTags component
   const handleTagsChange = (newTags) => {
     setEditData({ ...editData, tags: newTags });
   };
 
-  // boot strap variant mapping for status taaki alag alag status alag color me dikhai de
+  // Bootstrap variant mapping for status
   const getStatusVariant = (status) => {
     const variants = {
       New: "primary",
@@ -111,7 +127,7 @@ function LeadDetails({ lead, onClose, onUpdate }) {
     return variants[status] || "secondary";
   };
 
-  // Bootstrap variant mapping for priority taaki alag alag priority alag color me dikhai de
+  // Bootstrap variant mapping for priority
   const getPriorityVariant = (priority) => {
     const variants = {
       High: "danger",
@@ -144,69 +160,61 @@ function LeadDetails({ lead, onClose, onUpdate }) {
           <>
             {/* View Mode - Lead Details */}
             <Card className="border-0 bg-light mb-4">
-              <Card.Body>
-                <Row className="g-4">
-                  <Col md={6}>
-                    <div className="mb-3">
+              <Card.Body className="p-3">
+                <Row className="g-3">
+                  <Col xs={6}>
+                    <div className="mb-2">
                       <small className="text-muted fw-semibold d-block mb-1">
                         <i className="bi bi-person-badge me-1"></i>
                         Sales Agent
                       </small>
-                      <span className="fs-6">
-                        {lead.salesAgent?.name || "Unassigned"}
-                      </span>
+                      <span>{lead.salesAgent?.name || "Unassigned"}</span>
                     </div>
                   </Col>
-                  <Col md={6}>
-                    <div className="mb-3">
+                  <Col xs={6}>
+                    <div className="mb-2">
                       <small className="text-muted fw-semibold d-block mb-1">
                         <i className="bi bi-globe me-1"></i>
                         Source
                       </small>
-                      <span className="fs-6">{lead.source}</span>
+                      <span>{lead.source}</span>
                     </div>
                   </Col>
-                  <Col md={6}>
-                    <div className="mb-3">
+                  <Col xs={6}>
+                    <div className="mb-2">
                       <small className="text-muted fw-semibold d-block mb-1">
                         <i className="bi bi-flag me-1"></i>
                         Status
                       </small>
-                      <Badge
-                        bg={getStatusVariant(lead.status)}
-                        className="fs-6 fw-normal"
-                      >
+                      <Badge bg={getStatusVariant(lead.status)} className="fw-normal">
                         {lead.status}
                       </Badge>
                     </div>
                   </Col>
-                  <Col md={6}>
-                    <div className="mb-3">
+                  <Col xs={6}>
+                    <div className="mb-2">
                       <small className="text-muted fw-semibold d-block mb-1">
                         <i className="bi bi-exclamation-triangle me-1"></i>
                         Priority
                       </small>
-                      <Badge
-                        bg={getPriorityVariant(lead.priority)}
-                        className="fs-6 fw-normal"
-                      >
+                      <Badge bg={getPriorityVariant(lead.priority)} className="fw-normal">
                         {lead.priority}
                       </Badge>
                     </div>
                   </Col>
-                  <Col md={6}>
-                    <div className="mb-3">
+                  <Col xs={6}>
+                    <div className="mb-2">
                       <small className="text-muted fw-semibold d-block mb-1">
                         <i className="bi bi-clock me-1"></i>
                         Time to Close
                       </small>
-                      <Badge bg="light" text="dark" className="fs-6 fw-normal">
+                      <Badge bg="light" text="dark" className="fw-normal">
                         {lead.timeToClose} days
                       </Badge>
                     </div>
                   </Col>
-                  <Col md={6}>
-                    <div className="mb-3">
+                  <Col xs={6}>
+                    <div className="mb-2">
                       <small className="text-muted fw-semibold d-block mb-1">
                         <i className="bi bi-tags me-1"></i>
                         Tags
@@ -214,12 +222,7 @@ function LeadDetails({ lead, onClose, onUpdate }) {
                       <div className="d-flex gap-1 flex-wrap">
                         {lead.tags && lead.tags.length > 0 ? (
                           lead.tags.map((tag, idx) => (
-                            <Badge
-                              key={idx}
-                              bg="warning"
-                              text="dark"
-                              className="fw-normal"
-                            >
+                            <Badge key={idx} bg="warning" text="dark" className="fw-normal">
                               {tag}
                             </Badge>
                           ))
@@ -234,18 +237,18 @@ function LeadDetails({ lead, onClose, onUpdate }) {
             </Card>
 
             {/* Comments Section */}
-            <div className="border-top pt-4">
-              <h5 className="mb-3">
+            <div className="border-top pt-3">
+              <h6 className="mb-3">
                 <i className="bi bi-chat-left-text me-2"></i>
                 Comments <Badge bg="secondary">{comments.length}</Badge>
-              </h5>
+              </h6>
 
               {/* Comments List */}
-              <div style={{ maxHeight: "250px", overflowY: "auto" }}>
+              <div style={{ maxHeight: "200px", overflowY: "auto" }} className="mb-3">
                 {comments.length === 0 ? (
                   <Card className="bg-light border-0">
-                    <Card.Body className="text-center text-muted py-4">
-                      <i className="bi bi-chat fs-1 d-block mb-2"></i>
+                    <Card.Body className="text-center text-muted py-3">
+                      <i className="bi bi-chat fs-2 d-block mb-2"></i>
                       No comments yet. Add the first one below.
                     </Card.Body>
                   </Card>
@@ -254,7 +257,7 @@ function LeadDetails({ lead, onClose, onUpdate }) {
                     {comments.map((comment) => (
                       <ListGroup.Item
                         key={comment._id}
-                        className="border-start border-primary border-3 mb-2 bg-light"
+                        className="border-start border-primary border-3 mb-2 bg-light px-3 py-2"
                       >
                         <div className="d-flex justify-content-between align-items-start mb-1">
                           <strong className="text-primary small">
@@ -262,11 +265,10 @@ function LeadDetails({ lead, onClose, onUpdate }) {
                             {comment.author?.name || "Unknown"}
                           </strong>
                           <small className="text-muted">
-                            <i className="bi bi-clock me-1"></i>
                             {new Date(comment.createdAt).toLocaleString()}
                           </small>
                         </div>
-                        <p className="mb-0">{comment.commentText}</p>
+                        <p className="mb-0 small">{comment.commentText}</p>
                       </ListGroup.Item>
                     ))}
                   </ListGroup>
@@ -274,27 +276,52 @@ function LeadDetails({ lead, onClose, onUpdate }) {
               </div>
 
               {/* Add Comment Form */}
-              <Form onSubmit={handleAddComment} className="mt-3">
-                <Form.Group className="mb-3">
-                  <Form.Label className="small fw-semibold">
-                    Add Comment
-                  </Form.Label>
+              <Form onSubmit={handleAddComment}>
+                <Form.Group className="mb-2">
+                  <Form.Label className="small fw-semibold">Add Comment</Form.Label>
                   <Form.Control
                     as="textarea"
-                    rows={3}
+                    rows={2}
                     value={newComment}
                     onChange={(e) => setNewComment(e.target.value)}
                     placeholder="Enter your comment or update about this lead..."
                   />
                 </Form.Group>
-                <Button
-                  type="submit"
-                  variant="primary"
-                  disabled={!newComment.trim()}
-                >
-                  <i className="bi bi-send me-2"></i>
-                  Add Comment
-                </Button>
+
+                {/* Agent Selection and Submit Button Row */}
+                <Row className="g-2 align-items-end">
+                  <Col xs={12} sm={6}>
+                    <Form.Group>
+                      <Form.Label className="small fw-semibold">
+                        <i className="bi bi-person-badge me-1"></i>
+                        Comment Author
+                      </Form.Label>
+                      <Form.Select
+                        value={commentAuthor}
+                        onChange={(e) => setCommentAuthor(e.target.value)}
+                        size="sm"
+                      >
+                        <option value="">Select Agent</option>
+                        {agents.map((agent) => (
+                          <option key={agent._id} value={agent._id}>
+                            {agent.name}
+                          </option>
+                        ))}
+                      </Form.Select>
+                    </Form.Group>
+                  </Col>
+                  <Col xs={12} sm={6}>
+                    <Button
+                      type="submit"
+                      variant="primary"
+                      className="w-100"
+                      disabled={!newComment.trim() || !commentAuthor}
+                    >
+                      <i className="bi bi-send me-2"></i>
+                      Submit Comment
+                    </Button>
+                  </Col>
+                </Row>
               </Form>
             </div>
           </>
@@ -309,15 +336,13 @@ function LeadDetails({ lead, onClose, onUpdate }) {
               <Form.Control
                 type="text"
                 value={editData.name}
-                onChange={(e) =>
-                  setEditData({ ...editData, name: e.target.value })
-                }
+                onChange={(e) => setEditData({ ...editData, name: e.target.value })}
                 required
               />
             </Form.Group>
 
-            <Row className="mb-3">
-              <Col md={6}>
+            <Row className="mb-3 g-2">
+              <Col xs={12} md={6}>
                 <Form.Group>
                   <Form.Label>
                     <i className="bi bi-globe me-1"></i>
@@ -325,9 +350,7 @@ function LeadDetails({ lead, onClose, onUpdate }) {
                   </Form.Label>
                   <Form.Select
                     value={editData.source}
-                    onChange={(e) =>
-                      setEditData({ ...editData, source: e.target.value })
-                    }
+                    onChange={(e) => setEditData({ ...editData, source: e.target.value })}
                   >
                     <option value="Website">Website</option>
                     <option value="Referral">Referral</option>
@@ -338,7 +361,7 @@ function LeadDetails({ lead, onClose, onUpdate }) {
                   </Form.Select>
                 </Form.Group>
               </Col>
-              <Col md={6}>
+              <Col xs={12} md={6}>
                 <Form.Group>
                   <Form.Label>
                     <i className="bi bi-person-badge me-1"></i>
@@ -346,9 +369,7 @@ function LeadDetails({ lead, onClose, onUpdate }) {
                   </Form.Label>
                   <Form.Select
                     value={editData.salesAgent}
-                    onChange={(e) =>
-                      setEditData({ ...editData, salesAgent: e.target.value })
-                    }
+                    onChange={(e) => setEditData({ ...editData, salesAgent: e.target.value })}
                   >
                     {agents.map((agent) => (
                       <option key={agent._id} value={agent._id}>
@@ -360,8 +381,8 @@ function LeadDetails({ lead, onClose, onUpdate }) {
               </Col>
             </Row>
 
-            <Row className="mb-3">
-              <Col md={4}>
+            <Row className="mb-3 g-2">
+              <Col xs={12} sm={4}>
                 <Form.Group>
                   <Form.Label>
                     <i className="bi bi-flag me-1"></i>
@@ -369,9 +390,7 @@ function LeadDetails({ lead, onClose, onUpdate }) {
                   </Form.Label>
                   <Form.Select
                     value={editData.status}
-                    onChange={(e) =>
-                      setEditData({ ...editData, status: e.target.value })
-                    }
+                    onChange={(e) => setEditData({ ...editData, status: e.target.value })}
                   >
                     <option value="New">New</option>
                     <option value="Contacted">Contacted</option>
@@ -381,7 +400,7 @@ function LeadDetails({ lead, onClose, onUpdate }) {
                   </Form.Select>
                 </Form.Group>
               </Col>
-              <Col md={4}>
+              <Col xs={12} sm={4}>
                 <Form.Group>
                   <Form.Label>
                     <i className="bi bi-exclamation-triangle me-1"></i>
@@ -389,9 +408,7 @@ function LeadDetails({ lead, onClose, onUpdate }) {
                   </Form.Label>
                   <Form.Select
                     value={editData.priority}
-                    onChange={(e) =>
-                      setEditData({ ...editData, priority: e.target.value })
-                    }
+                    onChange={(e) => setEditData({ ...editData, priority: e.target.value })}
                   >
                     <option value="High">High</option>
                     <option value="Medium">Medium</option>
@@ -399,7 +416,7 @@ function LeadDetails({ lead, onClose, onUpdate }) {
                   </Form.Select>
                 </Form.Group>
               </Col>
-              <Col md={4}>
+              <Col xs={12} sm={4}>
                 <Form.Group>
                   <Form.Label>
                     <i className="bi bi-clock me-1"></i>
@@ -408,16 +425,14 @@ function LeadDetails({ lead, onClose, onUpdate }) {
                   <Form.Control
                     type="number"
                     value={editData.timeToClose}
-                    onChange={(e) =>
-                      setEditData({ ...editData, timeToClose: e.target.value })
-                    }
+                    onChange={(e) => setEditData({ ...editData, timeToClose: e.target.value })}
                     min="1"
                   />
                 </Form.Group>
               </Col>
             </Row>
 
-            {/* Tags - Now using MultiSelectTags component */}
+            {/* Tags */}
             <Form.Group className="mb-4">
               <Form.Label>
                 <i className="bi bi-tags me-1"></i>
@@ -441,10 +456,7 @@ function LeadDetails({ lead, onClose, onUpdate }) {
       </Modal.Body>
 
       <Modal.Footer className="border-0 pt-0">
-        <Button
-          variant="outline-secondary"
-          onClick={() => setEditMode(!editMode)}
-        >
+        <Button variant="outline-secondary" onClick={() => setEditMode(!editMode)}>
           <i className={`bi ${editMode ? "bi-x-lg" : "bi-pencil"} me-2`}></i>
           {editMode ? "Cancel" : "Edit Lead"}
         </Button>
