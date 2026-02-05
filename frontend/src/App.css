@@ -302,3 +302,26 @@
 .card {
   backface-visibility: hidden;
 }
+
+/* Mobile button full width utility */
+@media (max-width: 575.98px) {
+  .w-sm-auto {
+    width: 100% !important;
+  }
+
+  /* Better spacing for controls on mobile */
+  .controls-row {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .controls-row > * {
+    width: 100%;
+  }
+}
+
+@media (min-width: 576px) {
+  .w-sm-auto {
+    width: auto !important;
+  }
+}
