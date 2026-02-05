@@ -4,6 +4,19 @@
   background-color: #f8f9fa;
 }
 
+/* Global Container Padding for Mobile */
+.container-fluid {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+@media (min-width: 768px) {
+  .container-fluid {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
+
 /* Custom Card Shadows */
 .card {
   transition:
@@ -75,41 +88,155 @@
   height: 2rem;
 }
 
-/* Responsive Utilities */
+/* Mobile Responsive Styles */
 @media (max-width: 768px) {
   .App {
     font-size: 0.95rem;
   }
 
   h1 {
-    font-size: 1.75rem;
-  }
-
-  h2 {
     font-size: 1.5rem;
   }
 
+  h2 {
+    font-size: 1.35rem;
+  }
+
   h3 {
-    font-size: 1.25rem;
+    font-size: 1.15rem;
+  }
+
+  h4, h5 {
+    font-size: 1.1rem;
   }
 
   .card-body {
     padding: 1rem;
   }
 
+  .card-header {
+    padding: 0.75rem 1rem;
+  }
+
   .btn {
     padding: 0.5rem 1rem;
     font-size: 0.9rem;
   }
+
+  /* Modal adjustments for mobile */
+  .modal-dialog {
+    margin: 0.5rem;
+    max-width: calc(100% - 1rem);
+  }
+
+  .modal-body {
+    padding: 1rem;
+  }
+
+  .modal-header {
+    padding: 0.75rem 1rem;
+  }
+
+  .modal-footer {
+    padding: 0.75rem 1rem;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .modal-footer .btn {
+    flex: 1;
+    min-width: 120px;
+  }
+
+  /* Filter cards on mobile */
+  .row.g-3 > [class*="col"] {
+    margin-bottom: 0.5rem;
+  }
+
+  /* Table responsive on mobile */
+  .table-responsive {
+    font-size: 0.85rem;
+  }
+
+  .table th,
+  .table td {
+    padding: 0.5rem;
+    white-space: nowrap;
+  }
+
+  /* Form labels on mobile */
+  .form-label {
+    font-size: 0.85rem;
+    margin-bottom: 0.25rem;
+  }
+
+  /* Alerts on mobile */
+  .alert {
+    padding: 0.75rem;
+    font-size: 0.85rem;
+  }
+
+  /* List group items on mobile */
+  .list-group-item {
+    padding: 0.75rem;
+  }
+
+  /* Display text sizes on mobile */
+  .display-4 {
+    font-size: 2rem;
+  }
+
+  .display-6 {
+    font-size: 1.5rem;
+  }
 }
 
 @media (max-width: 576px) {
-  .display-3 {
-    font-size: 2.5rem;
+  .display-4 {
+    font-size: 1.75rem;
+  }
+
+  .display-6 {
+    font-size: 1.25rem;
   }
 
   .chart-container {
     height: 250px;
+  }
+
+  /* Navbar brand on small screens */
+  .navbar-brand {
+    font-size: 1.1rem;
+  }
+
+  /* Badge sizes on mobile */
+  .badge {
+    font-size: 0.7rem;
+    padding: 0.25em 0.5em;
+  }
+
+  /* Cards in grid - stack on mobile */
+  .row.g-4 > [class*="col-lg"],
+  .row.g-4 > [class*="col-md"] {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+
+  /* Modal fullscreen on very small screens */
+  .modal-dialog {
+    margin: 0;
+    max-width: 100%;
+    min-height: 100vh;
+  }
+
+  .modal-content {
+    border-radius: 0;
+    min-height: 100vh;
+  }
+
+  /* Comment section on mobile */
+  .modal-body .border-top {
+    padding-top: 1rem !important;
   }
 }
 
@@ -158,4 +285,20 @@
 .custom-scrollbar::-webkit-scrollbar-thumb {
   background-color: #6c757d;
   border-radius: 3px;
+}
+
+/* Consistent spacing utility */
+.section-padding {
+  padding: 1rem;
+}
+
+@media (min-width: 768px) {
+  .section-padding {
+    padding: 1.5rem;
+  }
+}
+
+/* Fix for card hover not moving other elements */
+.card {
+  backface-visibility: hidden;
 }
