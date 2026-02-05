@@ -307,11 +307,13 @@ function LeadList() {
       </Card>
 
       {/* Controls Row */}
-      <Row className="mb-3 align-items-center">
-        <Col xs="auto">
+      {/* Controls Row - Responsive for mobile */}
+      <Row className="mb-3 g-2">
+        <Col xs={12} sm="auto" className="mb-2 mb-sm-0">
           <Button
             variant="outline-secondary"
             size="sm"
+            className="w-100 w-sm-auto"
             onClick={() => {
               setFilters({
                 status: "",
@@ -328,27 +330,29 @@ function LeadList() {
           </Button>
         </Col>
 
-        <Col xs="auto" className="ms-auto d-flex align-items-center gap-2">
-          <Form.Label className="mb-0 small fw-semibold">Sort by:</Form.Label>
-          <Form.Select
-            value={sortBy}
-            onChange={(e) => setSortBy(e.target.value)}
-            size="sm"
-            style={{ width: "auto" }}
-          >
-            <option value="createdAt">Created Date</option>
-            <option value="timeToClose">Time to Close</option>
-            <option value="priority">Priority</option>
-          </Form.Select>
-          <Form.Select
-            value={sortOrder}
-            onChange={(e) => setSortOrder(e.target.value)}
-            size="sm"
-            style={{ width: "auto" }}
-          >
-            <option value="desc">Descending</option>
-            <option value="asc">Ascending</option>
-          </Form.Select>
+        <Col xs={12} sm className="d-flex flex-column flex-sm-row align-items-stretch align-items-sm-center gap-2 ms-sm-auto">
+          <Form.Label className="mb-1 mb-sm-0 small fw-semibold text-nowrap">Sort by:</Form.Label>
+          <div className="d-flex gap-2 flex-grow-1 flex-sm-grow-0">
+            <Form.Select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+              size="sm"
+              className="flex-grow-1"
+            >
+              <option value="createdAt">Created Date</option>
+              <option value="timeToClose">Time to Close</option>
+              <option value="priority">Priority</option>
+            </Form.Select>
+            <Form.Select
+              value={sortOrder}
+              onChange={(e) => setSortOrder(e.target.value)}
+              size="sm"
+              className="flex-grow-1"
+            >
+              <option value="desc">Desc</option>
+              <option value="asc">Asc</option>
+            </Form.Select>
+          </div>
         </Col>
       </Row>
 
