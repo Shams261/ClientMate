@@ -1,9 +1,11 @@
 import { useState, useEffect, useRef } from "react";
 import { Badge, Form, Button, ListGroup, Spinner } from "react-bootstrap";
 import { getTags, createTag } from "../services/api";
+import { useToast } from "../context/ToastContext";
 
 // MultiSelectTags Component - Allows selecting multiple tags with create option
 function MultiSelectTags({ selectedTags = [], onChange, allowCreate = true }) {
+  const { showToast } = useToast();
   const [availableTags, setAvailableTags] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
   const [newTagName, setNewTagName] = useState("");
@@ -74,9 +76,9 @@ function MultiSelectTags({ selectedTags = [], onChange, allowCreate = true }) {
       console.error("Error creating tag:", error);
       // Check if it's a duplicate tag error
       if (error.response?.status === 409) {
-        alert("Tag already exists!");
+        showToast("Tag already exists!", "warning");
       } else {
-        alert("Failed to create tag");
+        showToast("Failed to create tag", "error");
       }
     }
   };

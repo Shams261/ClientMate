@@ -11,9 +11,11 @@ import {
   Spinner,
 } from "react-bootstrap";
 import { getLeads, getAgents, getTags } from "../services/api";
+import { useToast } from "../context/ToastContext";
 
 // SalesAgentView Component - Displays leads grouped by sales agents with filtering and sorting
 function SalesAgentView() {
+  const { showToast } = useToast();
   const [allLeads, setAllLeads] = useState([]);
   const [agents, setAgents] = useState([]);
   const [availableTags, setAvailableTags] = useState([]);
@@ -53,7 +55,7 @@ function SalesAgentView() {
       setAvailableTags(tagsRes.data);
     } catch (error) {
       console.error("Error fetching data:", error);
-      alert("Failed to fetch data");
+      showToast("Failed to fetch data", "error");
     } finally {
       setLoading(false);
     }

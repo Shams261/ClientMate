@@ -16,21 +16,17 @@ import {
   getAgents,
 } from "../services/api";
 import MultiSelectTags from "./MultiSelectTags";
+import { useToast } from "../context/ToastContext";
 
-/**
- * LeadDetails Component
- *
- * Shows lead details in a modal with view/edit modes and a comments section.
- * Comments can be added by selecting an agent as the author from a dropdown.
- */
+// Component to display and edit lead details, as well as manage comments
 function LeadDetails({ lead, onClose, onUpdate }) {
+  const { showToast } = useToast();
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
-  const [commentAuthor, setCommentAuthor] = useState(""); // State for selected comment author
+  const [commentAuthor, setCommentAuthor] = useState("");
   const [agents, setAgents] = useState([]);
   const [editMode, setEditMode] = useState(false);
 
-  // Edit data state for lead editing
   const [editData, setEditData] = useState({
     name: lead.name,
     source: lead.source,
@@ -46,10 +42,8 @@ function LeadDetails({ lead, onClose, onUpdate }) {
     fetchAgents();
   }, [lead._id]);
 
-  // Set default comment author when agents are loaded
   useEffect(() => {
     if (agents.length > 0 && !commentAuthor) {
-      // Default to the lead's assigned agent if available, otherwise first agent
       setCommentAuthor(lead.salesAgent?._id || agents[0]._id);
     }
   }, [agents, lead.salesAgent]);
@@ -76,21 +70,21 @@ function LeadDetails({ lead, onClose, onUpdate }) {
     e.preventDefault();
     if (!newComment.trim()) return;
     if (!commentAuthor) {
-      alert("Please select an agent as the comment author");
+      showToast("Please select an agent as the comment author", "warning");
       return;
     }
 
     try {
       await addComment(lead._id, {
-        author: commentAuthor, // Use selected author from dropdown
+        author: commentAuthor,
         commentText: newComment,
       });
       setNewComment("");
       fetchComments();
-      alert("Comment added successfully!");
+      showToast("Comment added successfully!", "success");
     } catch (error) {
       console.error("Error adding comment:", error);
-      alert("Failed to add comment");
+      showToast("Failed to add comment", "error");
     }
   };
 
@@ -102,12 +96,12 @@ function LeadDetails({ lead, onClose, onUpdate }) {
         tags: editData.tags,
       };
       await updateLead(lead._id, dataToSend);
-      alert("Lead updated successfully!");
+      showToast("Lead updated successfully!", "success");
       setEditMode(false);
       if (onUpdate) onUpdate();
     } catch (error) {
       console.error("Error updating lead:", error);
-      alert("Failed to update lead");
+      showToast("Failed to update lead", "error");
     }
   };
 
@@ -115,7 +109,6 @@ function LeadDetails({ lead, onClose, onUpdate }) {
     setEditData({ ...editData, tags: newTags });
   };
 
-  // Bootstrap variant mapping for status
   const getStatusVariant = (status) => {
     const variants = {
       New: "primary",
@@ -127,7 +120,6 @@ function LeadDetails({ lead, onClose, onUpdate }) {
     return variants[status] || "secondary";
   };
 
-  // Bootstrap variant mapping for priority
   const getPriorityVariant = (priority) => {
     const variants = {
       High: "danger",
@@ -186,7 +178,10 @@ function LeadDetails({ lead, onClose, onUpdate }) {
                         <i className="bi bi-flag me-1"></i>
                         Status
                       </small>
-                      <Badge bg={getStatusVariant(lead.status)} className="fw-normal">
+                      <Badge
+                        bg={getStatusVariant(lead.status)}
+                        className="fw-normal"
+                      >
                         {lead.status}
                       </Badge>
                     </div>
@@ -197,7 +192,10 @@ function LeadDetails({ lead, onClose, onUpdate }) {
                         <i className="bi bi-exclamation-triangle me-1"></i>
                         Priority
                       </small>
-                      <Badge bg={getPriorityVariant(lead.priority)} className="fw-normal">
+                      <Badge
+                        bg={getPriorityVariant(lead.priority)}
+                        className="fw-normal"
+                      >
                         {lead.priority}
                       </Badge>
                     </div>
@@ -222,7 +220,12 @@ function LeadDetails({ lead, onClose, onUpdate }) {
                       <div className="d-flex gap-1 flex-wrap">
                         {lead.tags && lead.tags.length > 0 ? (
                           lead.tags.map((tag, idx) => (
-                            <Badge key={idx} bg="warning" text="dark" className="fw-normal">
+                            <Badge
+                              key={idx}
+                              bg="warning"
+                              text="dark"
+                              className="fw-normal"
+                            >
                               {tag}
                             </Badge>
                           ))
@@ -243,8 +246,10 @@ function LeadDetails({ lead, onClose, onUpdate }) {
                 Comments <Badge bg="secondary">{comments.length}</Badge>
               </h6>
 
-              {/* Comments List */}
-              <div style={{ maxHeight: "200px", overflowY: "auto" }} className="mb-3">
+              <div
+                style={{ maxHeight: "200px", overflowY: "auto" }}
+                className="mb-3"
+              >
                 {comments.length === 0 ? (
                   <Card className="bg-light border-0">
                     <Card.Body className="text-center text-muted py-3">
@@ -275,10 +280,11 @@ function LeadDetails({ lead, onClose, onUpdate }) {
                 )}
               </div>
 
-              {/* Add Comment Form */}
               <Form onSubmit={handleAddComment}>
                 <Form.Group className="mb-2">
-                  <Form.Label className="small fw-semibold">Add Comment</Form.Label>
+                  <Form.Label className="small fw-semibold">
+                    Add Comment
+                  </Form.Label>
                   <Form.Control
                     as="textarea"
                     rows={2}
@@ -288,7 +294,6 @@ function LeadDetails({ lead, onClose, onUpdate }) {
                   />
                 </Form.Group>
 
-                {/* Agent Selection and Submit Button Row */}
                 <Row className="g-2 align-items-end">
                   <Col xs={12} sm={6}>
                     <Form.Group>
@@ -326,7 +331,6 @@ function LeadDetails({ lead, onClose, onUpdate }) {
             </div>
           </>
         ) : (
-          /* Edit Mode - Form */
           <Form onSubmit={handleUpdate}>
             <Form.Group className="mb-3">
               <Form.Label>
@@ -336,7 +340,9 @@ function LeadDetails({ lead, onClose, onUpdate }) {
               <Form.Control
                 type="text"
                 value={editData.name}
-                onChange={(e) => setEditData({ ...editData, name: e.target.value })}
+                onChange={(e) =>
+                  setEditData({ ...editData, name: e.target.value })
+                }
                 required
               />
             </Form.Group>
@@ -350,7 +356,9 @@ function LeadDetails({ lead, onClose, onUpdate }) {
                   </Form.Label>
                   <Form.Select
                     value={editData.source}
-                    onChange={(e) => setEditData({ ...editData, source: e.target.value })}
+                    onChange={(e) =>
+                      setEditData({ ...editData, source: e.target.value })
+                    }
                   >
                     <option value="Website">Website</option>
                     <option value="Referral">Referral</option>
@@ -369,7 +377,9 @@ function LeadDetails({ lead, onClose, onUpdate }) {
                   </Form.Label>
                   <Form.Select
                     value={editData.salesAgent}
-                    onChange={(e) => setEditData({ ...editData, salesAgent: e.target.value })}
+                    onChange={(e) =>
+                      setEditData({ ...editData, salesAgent: e.target.value })
+                    }
                   >
                     {agents.map((agent) => (
                       <option key={agent._id} value={agent._id}>
@@ -390,7 +400,9 @@ function LeadDetails({ lead, onClose, onUpdate }) {
                   </Form.Label>
                   <Form.Select
                     value={editData.status}
-                    onChange={(e) => setEditData({ ...editData, status: e.target.value })}
+                    onChange={(e) =>
+                      setEditData({ ...editData, status: e.target.value })
+                    }
                   >
                     <option value="New">New</option>
                     <option value="Contacted">Contacted</option>
@@ -408,7 +420,9 @@ function LeadDetails({ lead, onClose, onUpdate }) {
                   </Form.Label>
                   <Form.Select
                     value={editData.priority}
-                    onChange={(e) => setEditData({ ...editData, priority: e.target.value })}
+                    onChange={(e) =>
+                      setEditData({ ...editData, priority: e.target.value })
+                    }
                   >
                     <option value="High">High</option>
                     <option value="Medium">Medium</option>
@@ -425,14 +439,15 @@ function LeadDetails({ lead, onClose, onUpdate }) {
                   <Form.Control
                     type="number"
                     value={editData.timeToClose}
-                    onChange={(e) => setEditData({ ...editData, timeToClose: e.target.value })}
+                    onChange={(e) =>
+                      setEditData({ ...editData, timeToClose: e.target.value })
+                    }
                     min="1"
                   />
                 </Form.Group>
               </Col>
             </Row>
 
-            {/* Tags */}
             <Form.Group className="mb-4">
               <Form.Label>
                 <i className="bi bi-tags me-1"></i>
@@ -456,7 +471,10 @@ function LeadDetails({ lead, onClose, onUpdate }) {
       </Modal.Body>
 
       <Modal.Footer className="border-0 pt-0">
-        <Button variant="outline-secondary" onClick={() => setEditMode(!editMode)}>
+        <Button
+          variant="outline-secondary"
+          onClick={() => setEditMode(!editMode)}
+        >
           <i className={`bi ${editMode ? "bi-x-lg" : "bi-pencil"} me-2`}></i>
           {editMode ? "Cancel" : "Edit Lead"}
         </Button>

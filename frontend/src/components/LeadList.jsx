@@ -13,9 +13,11 @@ import {
 import { getLeads, deleteLead, getAgents, getTags } from "../services/api";
 import { useSearchParams } from "react-router-dom";
 import LeadDetails from "./LeadDetails";
+import { useToast } from "../context/ToastContext";
 
 // LeadList Component - Displays list of leads with filtering, sorting, and actions
 function LeadList() {
+  const { showToast } = useToast();
   const [leads, setLeads] = useState([]);
   const [agents, setAgents] = useState([]);
   const [availableTags, setAvailableTags] = useState([]);
@@ -118,7 +120,7 @@ function LeadList() {
       setLeads(response.data);
     } catch (error) {
       console.error("Error fetching leads:", error);
-      alert("Failed to fetch leads");
+      showToast("Failed to fetch leads", "error");
     } finally {
       setLoading(false);
     }
@@ -143,11 +145,11 @@ function LeadList() {
 
     try {
       await deleteLead(id);
-      alert("Lead deleted successfully");
+      showToast("Lead deleted successfully!", "success");
       fetchLeads();
     } catch (error) {
       console.error("Error deleting lead:", error);
-      alert("Failed to delete lead");
+      showToast("Failed to delete lead", "error");
     }
   };
 
@@ -330,8 +332,14 @@ function LeadList() {
           </Button>
         </Col>
 
-        <Col xs={12} sm className="d-flex flex-column flex-sm-row align-items-stretch align-items-sm-center gap-2 ms-sm-auto">
-          <Form.Label className="mb-1 mb-sm-0 small fw-semibold text-nowrap">Sort by:</Form.Label>
+        <Col
+          xs={12}
+          sm
+          className="d-flex flex-column flex-sm-row align-items-stretch align-items-sm-center gap-2 ms-sm-auto"
+        >
+          <Form.Label className="mb-1 mb-sm-0 small fw-semibold text-nowrap">
+            Sort by:
+          </Form.Label>
           <div className="d-flex gap-2 flex-grow-1 flex-sm-grow-0">
             <Form.Select
               value={sortBy}

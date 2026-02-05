@@ -24,6 +24,7 @@ import {
   getClosedByAgentReport,
   getLastWeekReport,
 } from "../services/api";
+import { useToast } from "../context/ToastContext";
 
 // Register Chart.js components
 ChartJS.register(
@@ -37,6 +38,7 @@ ChartJS.register(
 );
 
 function ReportsPage() {
+  const { showToast } = useToast();
   const [pipelineData, setPipelineData] = useState(null);
   const [closedByAgent, setClosedByAgent] = useState([]);
   const [lastWeekLeads, setLastWeekLeads] = useState([]);
@@ -60,7 +62,7 @@ function ReportsPage() {
       setLastWeekLeads(lastWeek.data);
     } catch (error) {
       console.error("Error fetching reports:", error);
-      alert("Failed to fetch reports");
+      showToast("Failed to fetch reports", "error");
     } finally {
       setLoading(false);
     }

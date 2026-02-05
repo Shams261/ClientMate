@@ -11,9 +11,11 @@ import {
   Spinner,
 } from "react-bootstrap";
 import { getLeads, getAgents, getTags } from "../services/api";
+import { useToast } from "../context/ToastContext";
 
 // LeadStatusView Component - Displays leads grouped by status with filtering options
 function LeadStatusView() {
+  const { showToast } = useToast();
   const [allLeads, setAllLeads] = useState([]);
   const [agents, setAgents] = useState([]);
   const [availableTags, setAvailableTags] = useState([]);
@@ -49,7 +51,7 @@ function LeadStatusView() {
       setAvailableTags(tagsRes.data);
     } catch (error) {
       console.error("Error fetching data:", error);
-      alert("Failed to fetch leads");
+      showToast("Failed to fetch leads", "error");
     } finally {
       setLoading(false);
     }

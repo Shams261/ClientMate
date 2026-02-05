@@ -9,9 +9,11 @@ import {
   Badge,
 } from "react-bootstrap";
 import { getAgents, createAgent } from "../services/api"; // API functions to interact with backend for agents
+import { useToast } from "../context/ToastContext";
 
 // AgentsPage Component - Manage sales agents: view list and add new agents
 function AgentsPage() {
+  const { showToast } = useToast();
   const [agents, setAgents] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({
@@ -29,7 +31,7 @@ function AgentsPage() {
       setAgents(response.data);
     } catch (error) {
       console.error("Error fetching agents:", error);
-      alert("Failed to fetch agents");
+      showToast("Failed to fetch agents", "error");
     }
   };
 
@@ -37,15 +39,16 @@ function AgentsPage() {
     e.preventDefault();
     try {
       await createAgent(formData);
-      alert("Agent created successfully!");
+      showToast("Agent created successfully!", "success");
       setFormData({ name: "", email: "" });
       setShowForm(false);
       fetchAgents();
     } catch (error) {
       console.error("Error creating agent:", error);
-      alert(
+      showToast(
         "Failed to create agent: " +
           (error.response?.data?.error || error.message),
+        "error"
       );
     }
   };

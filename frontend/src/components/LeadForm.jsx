@@ -2,8 +2,10 @@ import { useState, useEffect } from "react";
 import { Card, Form, Row, Col, Button } from "react-bootstrap";
 import { createLead, getAgents } from "../services/api";
 import MultiSelectTags from "./MultiSelectTags";
+import { useToast } from "../context/ToastContext";
 
 function LeadForm({ onSuccess }) {
+  const { showToast } = useToast();
   const [agents, setAgents] = useState([]);
   // Form data state with tags as an array for multi-select
   const [formData, setFormData] = useState({
@@ -54,7 +56,7 @@ function LeadForm({ onSuccess }) {
       };
 
       await createLead(dataToSend);
-      alert("Lead created successfully!");
+      showToast("Lead created successfully!", "success");
 
       // Reset form
       setFormData({
@@ -70,9 +72,10 @@ function LeadForm({ onSuccess }) {
       if (onSuccess) onSuccess();
     } catch (error) {
       console.error("Error creating lead:", error);
-      alert(
+      showToast(
         "Failed to create lead: " +
           (error.response?.data?.error || error.message),
+        "error"
       );
     }
   };
@@ -204,7 +207,7 @@ function LeadForm({ onSuccess }) {
             </Col>
           </Row>
 
-          {/* Updated: Using MultiSelectTags component instead of text input */}
+          {/* yahan par app tags ka section hai */}
           <Form.Group className="mb-4">
             <Form.Label>
               <i className="bi bi-tags me-1"></i>
